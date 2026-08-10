@@ -1,0 +1,10 @@
+{
+  "tag": "pruned+decomposed",
+  "perplexity_wikitext2": 8308.50390625,
+  "hellaswag_acc": 0.225,
+  "tokens_per_sec": 0.4700443399306494,
+  "peak_vram_gb": 0.972438016,
+  "n_params": 1454038528,
+  "n_params_billions": 1.454038528,
+  "weights_size_gb": 2.908077056
+}

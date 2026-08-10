@@ -1,0 +1,10 @@
+{
+  "tag": "final_compressed_int4",
+  "perplexity_wikitext2": 8127.00537109375,
+  "hellaswag_acc": 0.225,
+  "tokens_per_sec": 6.007841640318444,
+  "peak_vram_gb": 2.387971584,
+  "n_params": 906933856,
+  "n_params_billions": 0.906933856,
+  "weights_size_gb": 1.291004288
+}

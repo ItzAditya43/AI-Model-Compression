@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, BitsAndBytesConfig
-from configs.config import BASE_MODEL, DEVICE
+from configs.config import BASE_MODEL, DEVICE, EVAL_PPL_SAMPLES, EVAL_HELLASWAG_SAMPLES
 from eval.harness import run_full_eval, save_result
 
 
@@ -38,7 +38,8 @@ def main():
         device_map={"": 0} if DEVICE == "cuda" else None,
     )
 
-    result = run_full_eval(model, tokenizer, DEVICE, tag="baseline_qwen2.5-3b-int4")
+    result = run_full_eval(model, tokenizer, DEVICE, tag="baseline_qwen2.5-3b-int4",
+                            n_ppl_samples=EVAL_PPL_SAMPLES, n_hellaswag=EVAL_HELLASWAG_SAMPLES)
     save_result(result, "results/baseline/metrics.json")
 
 

@@ -83,8 +83,14 @@ def prune_depth(model, tokenizer, device, keep_ratio, calib_batches):
     print(f"[prune_depth] {n_layers} -> {n_keep} layers. Dropped indices: {dropped}")
 
     new_layers = nn.ModuleList([layers[i] for i in keep_idx])
+    for new_idx, layer in enumerate(new_layers):
+        layer.layer_idx = new_idx
+        if hasattr(layer, "self_attn"):
+            layer.self_attn.layer_idx = new_idx
     model.model.layers = new_layers
     model.config.num_hidden_layers = n_keep
+    if getattr(model.config, "layer_types", None) is not None:
+        model.config.layer_types = [model.config.layer_types[i] for i in keep_idx]
     return model, keep_idx, dropped
 
 
@@ -109,6 +115,7 @@ def score_ffn_neurons(model, calib_batches, layer):
 def prune_width(model, calib_batches, keep_ratio):
     """Shrink FFN intermediate dimension on every remaining layer by activation magnitude."""
     layers = model.model.layers
+    final_n_keep = None
     for li, layer in enumerate(layers):
         mlp = layer.mlp
         inter_dim = mlp.gate_proj.out_features
@@ -136,12 +143,15 @@ def prune_width(model, calib_batches, keep_ratio):
         mlp.down_proj = new_down
 
         print(f"[prune_width] layer {li}: FFN {inter_dim} -> {n_keep}")
+        final_n_keep = n_keep
 
+    if final_n_keep is not None:
+        model.config.intermediate_size = final_n_keep
     return model
 
 
-def run_pruning(model, tokenizer, device, depth_keep_ratio, width_keep_ratio):
-    calib_batches = get_calibration_batches(tokenizer, device)
+def run_pruning(model, tokenizer, device, depth_keep_ratio, width_keep_ratio, n_batches=16):
+    calib_batches = get_calibration_batches(tokenizer, device, n_batches=n_batches)
     model, keep_idx, dropped = prune_depth(model, tokenizer, device, depth_keep_ratio, calib_batches)
     # recompute calibration activations through the now-shorter model before width pruning
     model = prune_width(model, calib_batches, width_keep_ratio)

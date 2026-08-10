@@ -48,7 +48,8 @@ def enable_layerwise_gpu_offload(model, device):
         return []
 
     handles = []
-    targets = [model.model.embed_tokens, *list(model.model.layers), model.model.norm]
+    targets = [model.model.embed_tokens, model.model.rotary_emb, *list(model.model.layers),
+               model.model.norm, model.lm_head]
     for module in targets:
         h1 = module.register_forward_pre_hook(
             lambda m, a, kw, d=device: _pre_hook(m, a, kw, d), with_kwargs=True
@@ -59,3 +60,15 @@ def enable_layerwise_gpu_offload(model, device):
         handles.extend([h1, h2])
     model.to("cpu")
     return handles
+
+
+def disable_layerwise_gpu_offload(handles, model, device):
+    """Remove offload hooks and move the whole (now presumably much smaller,
+    post-pruning/decomposition) model onto the target device permanently --
+    needed before training, since gradients/optimizer state must stay attached
+    to the actual live parameter tensors rather than being shuffled every
+    forward pass."""
+    for h in handles:
+        h.remove()
+    model.to(device)
+    return model

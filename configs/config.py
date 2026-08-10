@@ -17,9 +17,14 @@ PRUNE_FFN_KEEP_RATIO = 0.80     # shrink FFN intermediate dim to 80%
 SVD_RANK_RATIO = 0.5            # keep 50% of singular values on targeted linear layers
 
 # Distillation
-DISTILL_STEPS = 300
+DISTILL_STEPS = 80
 DISTILL_LR = 1e-4
 DISTILL_TEMPERATURE = 2.0
+
+# Calibration / eval sizing (kept small for fast iteration on a 4GB laptop GPU)
+CALIB_N_BATCHES = 6
+EVAL_PPL_SAMPLES = 20
+EVAL_HELLASWAG_SAMPLES = 40
 
 # Quantization
 QUANT_BITS = 4
