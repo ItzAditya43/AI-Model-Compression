@@ -1,0 +1,10 @@
+{
+  "tag": "baseline_qwen2.5-3b-int4",
+  "perplexity_wikitext2": 13.125683784484863,
+  "hellaswag_acc": 0.58,
+  "tokens_per_sec": 20.88449231821554,
+  "peak_vram_gb": 3.179556352,
+  "n_params": 1698672640,
+  "n_params_billions": 1.69867264,
+  "weights_size_gb": 2.010079232
+}

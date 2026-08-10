@@ -1,0 +1,11 @@
+venv/
+.claude/
+__pycache__/
+*.pyc
+checkpoints/
+results/*/*.json.bak
+*.safetensors
+*.bin
+*.pt
+.cache/
+/tmp/
